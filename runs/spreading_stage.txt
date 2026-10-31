@@ -1,0 +1,92 @@
+INPUTS
+  Q = 700 W; die 814 mm2 -> equal-area circle radius 16.10 mm
+  footprint 400 cm2 -> equal-area circle radius 112.8 mm (area ratio 49x)
+  joint h = 4030 W/m2/K; solder TIM 52In/48Sn 0.039 cm2 C/W; materials are handbook k (sources in the file), diamond-class ASSUMED
+  SCOPE: uniform die flux, periodic-array edge, no silicon / contact resistance. Totals are still lower bounds.
+
+TABLE A  die-surface (mean) to panel, footprint 400 cm2, solder TIM 52In/48Sn. Drops in K.
+  'area x' = radiator area vs a zero-drop stack when the MEAN (or uniform-flux PEAK) die surface is held at 60 C, q_abs = 0.
+  Multiples are not additive across layers (T^4 law). The zero-drop baseline is unreachable. No silicon resistance is included.
+  plate           | t_mm | TIM   | plate 1D | spreading | joint | total  | peak extra | area x mean | area x peak
+  Al 6061         |    2 |  3.35 |     0.21 |    111.08 |  4.34 | 118.99 |      32.94 |       5.86x |      11.42x
+  Al 6061         |    5 |  3.35 |     0.52 |     83.45 |  4.34 |  91.67 |      21.08 |       3.62x |       5.22x
+  Al 6061         |   10 |  3.35 |     1.05 |     68.43 |  4.34 |  77.17 |      15.10 |       2.87x |       3.66x
+  Cu              |    2 |  3.35 |     0.09 |     76.06 |  4.34 |  83.85 |      20.55 |       3.19x |       4.50x
+  Cu              |    5 |  3.35 |     0.22 |     49.14 |  4.34 |  57.06 |      11.00 |       2.12x |       2.49x
+  Cu              |   10 |  3.35 |     0.45 |     35.47 |  4.34 |  43.62 |       7.08 |       1.75x |       1.94x
+  diamond-class   |    2 |  3.35 |     0.04 |     44.79 |  4.34 |  52.52 |      10.36 |       1.99x |       2.31x
+  diamond-class   |    5 |  3.35 |     0.09 |     24.98 |  4.34 |  32.76 |       4.90 |       1.51x |       1.62x
+  diamond-class   |   10 |  3.35 |     0.17 |     16.08 |  4.34 |  23.95 |       2.94 |       1.35x |       1.40x
+
+TABLE B  footprint sweep, Cu 5 mm, solder TIM 52In/48Sn. All values K.
+  footprint_cm2 | spreading | joint | plate 1D | total | area x mean
+           100  |     37.20 | 17.37 |     0.90 | 58.82 |      2.18x
+           200  |     44.76 |  8.68 |     0.45 | 57.25 |      2.13x
+           400  |     49.14 |  4.34 |     0.22 | 57.06 |      2.12x
+           900  |     51.67 |  1.93 |     0.10 | 57.05 |      2.12x
+
+TABLE C  full worked stacks (TIM + plate + spreading + joint at 400 cm2), plate 5 mm.
+  Radiator area multiple if the die surface is held at 60 C (T_rad = 60 C minus the total), one side.
+  plate          | total K | T_rad C | area x, q_abs=0 | q_abs=100  | q_abs=200 | spreading alone x (q_abs=0)
+  Al 6061        |   91.67 |   -31.7 |           3.62x |      7.73x | infeasible |          3.17x
+  Cu             |   57.06 |     2.9 |           2.12x |      2.74x |      4.92x |          1.89x
+  diamond-class  |   32.76 |    27.2 |           1.51x |      1.69x |      2.05x |          1.37x
+
+TABLE D  how much spreader conductance-thickness (k*t) the footprint needs. Isotropic effective k, t = 5 mm, footprint 400 cm2.
+  fin length sqrt(k t / h) must approach the footprint radius 113 mm, i.e. k*t of about h*b^2 = 51 W/K
+  k*t W/K | k_eff W/m/K | fin length mm | spreading K | total K (with TIM, joint) | area x (q_abs=0)
+        2 |         400 |            22 |       48.32 |                     56.23 |            2.09x
+        5 |        1000 |            35 |       24.98 |                     32.76 |            1.51x
+       15 |        3000 |            61 |        9.96 |                     17.69 |            1.24x
+       50 |       10000 |           111 |        3.25 |                     10.95 |            1.14x
+      150 |       30000 |           193 |        1.11 |                      8.81 |            1.11x
+      500 |      100000 |           352 |        0.34 |                      8.03 |            1.10x
+  Reference k*t: Cu 5 mm = 1.95 W/K, diamond-class 5 mm = 5 W/K. An effective figure for an embedded heat-pipe panel is not
+  taken from any source here; a real panel is anisotropic, so rows at high k*t are an idealised bound.
+
+SELF-CHECKS
+  [PASS] a = b: spreading term is zero
+  [PASS] a = b: total equals the 1D plate plus joint
+  [PASS] series matches finite-volume within 0.5%: thin plate, weak joint
+  [PASS] finite-volume conserves energy to 1e-6: thin plate, weak joint
+  [PASS] series matches finite-volume within 0.5%: thick plate, strong joint
+  [PASS] finite-volume conserves energy to 1e-6: thick plate, strong joint
+  [PASS] series matches finite-volume within 0.5%: small footprint ratio, high k
+  [PASS] finite-volume conserves energy to 1e-6: small footprint ratio, high k
+  [PASS] finite-volume result changes under 0.3% on a 2x refined grid
+  [PASS] half-space limit within 3% of 8/(3 pi^2) Q/(k a)
+  [PASS] thin-plate closed form matches the series within 2%: k=390, t=0.5 mm
+  [PASS] thin-plate closed form matches the series within 2%: k=167, t=0.3 mm
+  [PASS] closed-form check fires on the no-spreading value q/h (a plate that does nothing)
+  [PASS] spreading always beats no spreading: fin result is below q/h and above zero
+  [PASS] gate fires on centre-instead-of-mean
+  [PASS] gate fires on a series with the Biot term dropped
+  [PASS] higher conductivity lowers spreading excess
+  [PASS] smaller die raises spreading excess at the same power
+  [PASS] peak is above mean
+  [PASS] series term count 4000 vs 8000 agrees to 1e-6
+  [PASS] stack pieces sum to the total
+  [PASS] stack joint term equals the 400 cm2 joint of the first script
+  [PASS] area multiple of a zero drop is 1
+  [PASS] area multiple of 10 K at q_abs = 0 equals (333.15/323.15)^4
+  [PASS] area multiple is above 1 for a positive drop
+  [PASS] area multiple returns None when absorbed flux exceeds emission
+  [PASS] area multiple raises on a drop above the die temperature
+  [PASS] area multiple raises on emissivity above 1
+  [PASS] TIM drop uses the die area: 700/814e-6 * 3.9e-6
+  [PASS] plate 1D term doubles when thickness doubles
+  [PASS] plate 1D term equals Q t / (k pi b^2) by hand
+  [PASS] peak extra is positive
+  [PASS] material table holds Cu 390 and Al 167 W/m/K
+  [PASS] fin length of Cu 5 mm (k t = 1.95 W/K) at h = 4030 is 22.0 mm
+  [PASS] k_eff from k t = 50 W/K at 5 mm is 10000
+  [PASS] k t that makes the fin length equal the footprint radius is h b^2
+  [PASS] die larger than footprint raises
+  [PASS] zero conductivity raises
+  [PASS] zero thickness raises
+  [PASS] finite-volume rejects a = b
+  [PASS] negative area raises
+  41/41 passed
+  Table rows are not individually tested; the pieces they use (area multiple, stack pieces, fin length, k_eff) have known-answer tests.
+  Verification stops here: the series solution is cross-checked against an independent finite-volume solve of the same
+  idealised geometry. Neither says anything about a real, square, non-uniformly heated die on a shared panel.

@@ -1,0 +1,91 @@
+INPUTS
+  Q = 700 W; die 814 mm2; footprint 400 cm2; joint h = 4030 W/m2/K
+  silicon k = 130.0 W/m/K (Electronics Cooling fit at 60 C), thickness 0.300, 0.775 mm (ASSUMED)
+  die-attach interface R'' = 3.90e-06 m2K/W (52In/48Sn, Indium brochure, vendor value), applied locally
+  hot-spot sizes and power shares are PLACEHOLDERS; no public power map was used
+  SCOPE: axisymmetric, isothermal panel, no contact resistance beyond R''. Still a lower bound.
+
+TABLE H1  uniform flux: what the silicon adds. Mean die rise above the panel, K.
+  plate                                | silicon mm | no silicon (earlier) | with silicon | silicon adds
+  Cu 5 mm                              |      0.300 |                57.06 |        58.89 |         1.83
+  Cu 5 mm                              |      0.775 |                57.06 |        61.81 |         4.75
+  diamond-class 5 mm                   |      0.300 |                32.76 |        34.72 |         1.96
+  diamond-class 5 mm                   |      0.775 |                32.76 |        37.82 |         5.06
+  k*t = 50 W/K (k_eff 10000, 5 mm)     |      0.300 |                10.95 |        12.94 |         1.99
+  k*t = 50 W/K (k_eff 10000, 5 mm)     |      0.775 |                10.95 |        16.08 |         5.13
+
+TABLE H2  hot spots, silicon 0.775 mm. Die-face rise above the panel, K. 'peak' = die-face temperature at the centre of the hot core.
+  'area x mean' = radiator area vs zero drop when the MEAN die face is held at 60 C (q_abs = 0). 'peak at' = peak die-face temperature in C
+  if the panel is sized for that mean-at-60-C design (i.e. 60 + peak - mean). No peak area multiple is shown: it would compare different designs.
+  plate / case                                                     | mean  | peak  | peak - mean | area x mean | peak at (C)
+  Cu 5 mm              uniform flux                                       |  61.8 |  72.0 |        10.2 |       2.27x |        70.2
+  Cu 5 mm              core 25% of area, 2.0x die-avg flux (3.0x the rest) |  64.4 |  94.4 |        30.1 |       2.36x |        90.1
+  Cu 5 mm              core 25% of area, 3.0x die-avg flux (9.0x the rest) |  66.9 | 116.8 |        49.9 |       2.45x |       109.9
+  Cu 5 mm              core 10% of area, 3.0x die-avg flux (3.9x the rest) |  63.9 | 106.3 |        42.4 |       2.34x |       102.4
+  Cu 5 mm              core 10% of area, 5.0x die-avg flux (9.0x the rest) |  65.9 | 140.5 |        74.6 |       2.41x |       134.6
+  diamond-class 5 mm   uniform flux                                       |  37.8 |  42.5 |         4.7 |       1.62x |        64.7
+  diamond-class 5 mm   core 25% of area, 2.0x die-avg flux (3.0x the rest) |  39.0 |  56.9 |        17.9 |       1.65x |        77.9
+  diamond-class 5 mm   core 25% of area, 3.0x die-avg flux (9.0x the rest) |  40.2 |  71.2 |        31.0 |       1.67x |        91.0
+  diamond-class 5 mm   core 10% of area, 3.0x die-avg flux (3.9x the rest) |  38.8 |  66.7 |        27.9 |       1.64x |        87.9
+  diamond-class 5 mm   core 10% of area, 5.0x die-avg flux (9.0x the rest) |  39.7 |  90.8 |        51.1 |       1.66x |       111.1
+  k*t = 50 W/K         uniform flux                                       |  16.1 |  16.6 |         0.5 |       1.22x |        60.5
+  k*t = 50 W/K         core 25% of area, 2.0x die-avg flux (3.0x the rest) |  16.2 |  25.7 |         9.5 |       1.22x |        69.5
+  k*t = 50 W/K         core 25% of area, 3.0x die-avg flux (9.0x the rest) |  16.3 |  34.8 |        18.5 |       1.22x |        78.5
+  k*t = 50 W/K         core 10% of area, 3.0x die-avg flux (3.9x the rest) |  16.2 |  34.3 |        18.1 |       1.22x |        78.1
+  k*t = 50 W/K         core 10% of area, 5.0x die-avg flux (9.0x the rest) |  16.3 |  51.9 |        35.6 |       1.22x |        95.6
+
+TABLE H3  silicon thickness, core 10% of area carrying 50% of the power (5x die-avg flux). Peak rise above the panel, K.
+  plate                              | 0.100 mm | 0.300 mm | 0.775 mm
+  Cu 5 mm                            |    124.8 |    129.7 |    140.5
+  diamond-class 5 mm                 |     70.5 |     76.7 |     90.8
+  k*t = 50 W/K (k_eff 10000, 5 mm)   |     29.9 |     36.5 |     51.9
+
+TABLE H4  silicon conductivity sensitivity (hot silicon conducts less). Core 10% / 50% power, silicon 0.775 mm. Peak rise, K.
+  plate                              | k_si 130 | k_si 100 | k_si 80
+  Cu 5 mm                            |    140.5 |    149.5 |    158.7
+  diamond-class 5 mm                 |     90.8 |     98.9 |    107.5
+  k*t = 50 W/K (k_eff 10000, 5 mm)   |     51.9 |     59.7 |     68.0
+  k_si falls with temperature (as T^(-4/3) in the Electronics Cooling fit: about 121 W/m/K at 80 C, 112 at 100 C); the model uses one value.
+
+SELF-CHECKS
+  [PASS] two-zone flux conserves the power
+  [PASS] uniform case (phi = f) gives equal fluxes
+  [PASS] layered solver matches the plate series, uniform flux, thin silicon: Cu 5 mm (mean, 0.7%)
+  [PASS] layered solver matches the plate series, uniform flux, thin silicon: Cu 5 mm (peak, 1.5%)
+  [PASS] layered solver matches the plate series, uniform flux, thin silicon: Al 2 mm (mean, 0.7%)
+  [PASS] layered solver matches the plate series, uniform flux, thin silicon: Al 2 mm (peak, 1.5%)
+  [PASS] layered solver matches series superposition, hot spot phi=0.25, f=0.75 (mean, 0.7%)
+  [PASS] layered solver matches series superposition, hot spot phi=0.25, f=0.75 (peak, 1.5%)
+  [PASS] layered solver matches series superposition, hot spot phi=0.1, f=0.5 (mean, 0.7%)
+  [PASS] layered solver matches series superposition, hot spot phi=0.1, f=0.5 (peak, 1.5%)
+  [PASS] isothermal silicon and plate: die rise equals q*R'' + Q/(pi b^2 h)
+  [PASS] isothermal limit: adding 2e-6 m2K/W of interface adds q*2e-6
+  [PASS] uniform flux through real silicon with an isothermal plate: q*(t/k + R'') + joint
+  [PASS] source power equals 700 W
+  [PASS] energy leaving the bottom equals the source (1e-6)
+  [PASS] mean changes under 0.5% on a 2x refined grid
+  [PASS] peak changes under 1% on a 2x refined grid
+  [PASS] a hot spot raises the peak
+  [PASS] a hot spot raises the mean
+  [PASS] peak is above mean
+  [PASS] thinner silicon lowers the hot-spot peak
+  [PASS] silicon adds to the uniform-flux rise
+  [PASS] a higher plate conductivity lowers the hot-spot peak
+  [PASS] thin-silicon uniform case reproduces the earlier stack total (within 1%)
+  [PASS] independent-solver anchor, mean (0.2%): case 1: Cu 5 mm, Si 0.775 mm, core 10%/50%
+  [PASS] independent-solver anchor, peak (0.2%): case 1: Cu 5 mm, Si 0.775 mm, core 10%/50%
+  [PASS] independent-solver anchor, mean (0.2%): case 2: k*t 50 plate, Si 0.775 mm, core 25%/75%
+  [PASS] independent-solver anchor, peak (0.2%): case 2: k*t 50 plate, Si 0.775 mm, core 25%/75%
+  [PASS] independent-solver anchor, mean (0.2%): case 3: Cu 5 mm, Si 0.3 mm, uniform
+  [PASS] independent-solver anchor, peak (0.2%): case 3: Cu 5 mm, Si 0.3 mm, uniform
+  [PASS] independent-solver anchor, mean (0.2%): case 4: k 1000 plate, Si 0.775 mm, core 10%/30%
+  [PASS] independent-solver anchor, peak (0.2%): case 4: k 1000 plate, Si 0.775 mm, core 10%/30%
+  [PASS] core fraction above one raises
+  [PASS] power fraction of zero raises
+  [PASS] core larger than the die raises
+  [PASS] die larger than the footprint raises
+  [PASS] negative interface resistance raises
+  37/37 passed
+  Verification stops here: the solver is checked against the earlier series (by superposition), closed-form limits, and four
+  numbers from an independent solver. Not covered: several hot spots, neighbouring dies, temperature-dependent conductivity.
+  Table rows are not individually tested. Hot-spot sizes are placeholders and say nothing about any real chip.

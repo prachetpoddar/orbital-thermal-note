@@ -1,0 +1,96 @@
+INPUTS (tags in the source file)
+  Q = 700 W, die = 814 mm2, die flux = 8.6e+05 W/m2
+  eps = 0.85, eta = 0.95, absorbed flux = 0.0 W/m2 (sweep in Table 6), sink 0 K
+  joint conductance = 4030.0 W/m2/K (2.6 W/in2/K); assumed joint footprint = 400 cm2
+  solder TIM 52In/48Sn: 0.039 cm2 C/W = 3.90e-06 m2 K/W
+  solder TIM 99.99In: 0.0514 cm2 C/W = 5.14e-06 m2 K/W
+  T_j reference: 60 C and 80 C (die-surface, no silicon resistance)
+  SCOPE: no spreading stage between die and joint footprint; all totals are lower bounds
+
+TABLE 1  baseline radiator area per chip, zero conduction drop, q_abs = 0
+  T_rad = 60 C: one side 1.241 m2, two sides 0.621 m2
+  T_rad = 80 C: one side 0.983 m2, two sides 0.491 m2
+
+TABLE 2  radiator area penalty at fixed T_j vs conduction drop (q_abs = 0, same % for one or two sides)
+  dT_K | T_rad(60C) | penalty%(60C) | penalty%(80C) | first-order%(60C)
+     0 |    333.15  |         0.00  |         0.00  |           0.00
+     1 |    332.15  |         1.21  |         1.14  |           1.20
+     2 |    331.15  |         2.44  |         2.30  |           2.40
+     3 |    330.15  |         3.68  |         3.47  |           3.60
+     5 |    328.15  |         6.24  |         5.87  |           6.00
+    10 |    323.15  |        12.96  |        12.18  |          12.01
+    15 |    318.15  |        20.24  |        18.96  |          18.01
+    20 |    313.15  |        28.10  |        26.26  |          24.01
+
+TABLE 3  die-to-lid TIM at die-scale flux (die area 814 mm2). Column 2 is the T_j rise at fixed radiator temperature; column 3 is the fixed-T_j area penalty (n/m above 15 K)
+  option                              | T_j rise K | area penalty %
+  solder TIM 52In/48Sn  0.0390 cm2C/W |       3.35 |      4.1
+  solder TIM 99.99In    0.0514 cm2C/W |       4.42 |      5.5
+  polymer k=0.5 W/mK, BLT= 25 um        |      43.00 |      n/m
+  polymer k=0.5 W/mK, BLT= 50 um        |      86.00 |      n/m
+  polymer k=0.5 W/mK, BLT=100 um        |     171.99 |      n/m
+  polymer k=1.0 W/mK, BLT= 25 um        |      21.50 |      n/m
+  polymer k=1.0 W/mK, BLT= 50 um        |      43.00 |      n/m
+  polymer k=1.0 W/mK, BLT=100 um        |      86.00 |      n/m
+  polymer k=5.0 W/mK, BLT= 25 um        |       4.30 |      5.3
+  polymer k=5.0 W/mK, BLT= 50 um        |       8.60 |     11.0
+  polymer k=5.0 W/mK, BLT=100 um        |      17.20 |      n/m
+
+TABLE 4  bonded joint to heat-pipe panel vs footprint (2.6 W/in2/K; reference area unconfirmed)
+  footprint_cm2 | T_j rise K | area penalty %
+            12  |     144.75 |      n/m
+           100  |      17.37 |      n/m
+           400  |       4.34 |      5.4
+           900  |       1.93 |      2.4
+  footprint for a 2 K joint drop: 868 cm2
+  footprint for a 5 K joint drop: 347 cm2
+
+TABLE 5  worked stacks, spreading stage NOT included (lower bounds). Joint footprint 400 cm2 (ASSUMED).
+  stack                                   | TIM    joint  | interfaces K | penalty% | + 3 K panel gradient K | penalty%
+  solder 52In/48Sn                        |  3.35   4.34  |        7.70  |      9.8 |                 10.70  |     13.9
+  solder 99.99In                          |  4.42   4.34  |        8.76  |     11.3 |                 11.76  |     15.5
+  polymer k=5 (patent upper bound) x 50 um|  8.60   4.34  |       12.94  |     17.2 |                 15.94  |      n/m
+  polymer k=1 (patent typical) x 50 um    | 43.00   4.34  |       47.34  |      n/m |                 50.34  |      n/m
+  (the panel gradient overlaps with eta = 0.95, so the right-hand pair is an upper reading)
+
+TABLE 6  q_abs sweep: baseline area and fixed-T_j penalty (60 C), one side. Absorbed flux on the radiating face.
+  stack used: solder 52In/48Sn + joint 400 cm2, interfaces only = 7.70 K
+  q_abs W/m2 | baseline area m2 | penalty% for that stack | penalty% for 5 K
+          0  |           1.241  |                    9.8  |             6.2
+        100  |           1.492  |                   12.0  |             7.6
+        200  |           1.871  |                   15.6  |             9.7
+
+SELF-CHECKS
+  [PASS] T^4 sensitivity passes on the model
+  [PASS] T^4 sensitivity fires on a T^3 model
+  [PASS] energy balance passes on the model
+  [PASS] energy balance fires on a model that drops eta
+  [PASS] energy balance passes with two sides
+  [PASS] energy balance passes with absorbed flux
+  [PASS] energy balance fires on a model that ignores absorbed flux
+  [PASS] absorbed flux increases the area
+  [PASS] model joint conductance converts 2.6 W/in2/K correctly
+  [PASS] conversion check fires on 0.0254 not squared
+  [PASS] conversion check fires on a 39.37 factor instead of 39.37^2
+  [PASS] cm2 K/W to m2 K/W: 0.039 becomes 3.9e-6
+  [PASS] area-specific drop: 100 W over 0.01 m2 at 1e-3 m2K/W is 10 K
+  [PASS] polymer drop: 100 W, 0.01 m2, k=1, 1 mm is 10 K
+  [PASS] polymer drop doubles when thickness doubles
+  [PASS] joint drop: a power of h*A*5 gives 5 K
+  [PASS] joint drop falls as 1/footprint
+  [PASS] footprint for a joint drop round-trips
+  [PASS] stack total is the plain sum
+  [PASS] fixed-T_j penalty of zero drop is zero
+  [PASS] fixed-T_j penalty matches a hand value: 1 K at 333.15 K is (333.15/332.15)^4 - 1
+  [PASS] negative power raises
+  [PASS] zero temperature raises
+  [PASS] emissivity above 1 raises
+  [PASS] three sides raises
+  [PASS] absorbed flux above emission raises
+  [PASS] zero footprint raises
+  [PASS] negative drop in a stack raises
+  [PASS] larger drop means larger area
+  [PASS] two sides halve the area
+  [PASS] exact 10 K penalty is above the first-order estimate and within 20 percent of it
+  31/31 passed
+  Verification stops here: the checks cover internal consistency, unit handling and hand-computed layer values, not the physics of any real stack.
