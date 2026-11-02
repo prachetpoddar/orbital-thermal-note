@@ -1,7 +1,8 @@
 # Chip-to-radiator heat budget for orbital AI compute
 
 Three Python scripts behind the note "Chip-to-Radiator Heat Budget for Orbital AI Compute"
-(Prachet Poddar, 31 October 2026). They estimate where the temperature budget goes between a
+(Prachet Poddar, 31 October 2026), which is included here as
+[`chip-to-radiator-heat-budget.pdf`](chip-to-radiator-heat-budget.pdf). They estimate where the temperature budget goes between a
 700 W accelerator die and a radiator panel in orbit, for one chip on an isothermal panel. The
 conduction totals are first-order lower bounds for the stated materials and assumed geometry.
 The hot-spot peaks rest on placeholder power maps and are not bounds in either direction. The
@@ -14,6 +15,7 @@ scripts describe no company's actual hardware.
 | `thermal_budget.py` | Radiator area against the conduction drop, plus the interface layers (TIM and bonded joint). Standard library only. |
 | `spreading_stage.py` | Spreading from the die to the joint footprint: eigenfunction series, cross-checked by an independent finite-volume solve. |
 | `hotspot_silicon.py` | Adds the silicon die, a local die-attach resistance and a two-zone hot spot. |
+| `chip-to-radiator-heat-budget.pdf` | The note: results, charts, limits and sources (8 pages). |
 | `runs/*.txt` | Output of each script, run on 31 October 2026. |
 | `requirements.txt` | Versions used for those runs. |
 
